@@ -1,0 +1,24 @@
+{
+  "name": "aintivirus-mixer-circuits",
+  "version": "1.0.0",
+  "description": "Zero-knowledge circuits for AintiVirus Mixer",
+  "scripts": {
+    "compile": "circom circuits/mixer.circom --r1cs --wasm --sym -o build",
+    "setup:phase1": "npx snarkjs powersoftau new bn128 15 pot15_0000.ptau -v && npx snarkjs powersoftau contribute pot15_0000.ptau pot15_0001.ptau --name=\"First contribution\" -v -e=\"random text\" && npx snarkjs powersoftau prepare phase2 pot15_0001.ptau pot15_final.ptau -v",
+    "setup:phase2": "npx snarkjs groth16 setup build/mixer.r1cs pot15_final.ptau build/mixer_0000.zkey && npx snarkjs zkey contribute build/mixer_0000.zkey build/mixer_0001.zkey --name=\"1st Contributor Name\" -v -e=\"another random text\" && npx snarkjs zkey export verificationkey build/mixer_0001.zkey build/verification_key.json",
+    "setup": "npm run setup:phase1 && npm run setup:phase2",
+    "test": "node test/test.js",
+    "generate-verifier": "snarkjs zkey export solidityverifier build/mixer_0001.zkey ./output/verifiers/MixerVerifier.sol"
+  },
+  "keywords": [
+    "zk",
+    "zero-knowledge",
+    "circom",
+    "mixer",
+    "privacy"
+  ],
+  "dependencies": {
+    "circomlib": "^2.0.5",
+    "snarkjs": "^0.7.5"
+  }
+}
