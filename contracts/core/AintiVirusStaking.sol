@@ -150,7 +150,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
 
         if (mode == uint256(CoreFactory.AssetMode.ETH)) {
             require(
-                stakeRecords[staker].ethStakedSeasonId >= seasonId,
+                stakeRecords[staker].ethStakedSeasonId <= seasonId,
                 "User has not staked in this season"
             );
             require(
@@ -286,9 +286,12 @@ contract AintiVirusStaking is IAintiVirusStaking {
             block.timestamp +
             stakingSeasonPeriod;
 
-        stakeSeasons[currentStakeSeason + 1].totalEthWeightValue  += stakeSeasons[currentStakeSeason].totalStakedEthAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
+        stakeSeasons[currentStakeSeason + 1].totalEthWeightValue  = stakeSeasons[currentStakeSeason].totalStakedEthAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
 
-        stakeSeasons[currentStakeSeason + 1].totalTokenWeightValue += stakeSeasons[currentStakeSeason].totalStakedTokenAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
+        stakeSeasons[currentStakeSeason + 1].totalTokenWeightValue = stakeSeasons[currentStakeSeason].totalStakedTokenAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
+
+        stakeSeasons[currentStakeSeason + 1].totalRewardEthAmount = 0;
+        stakeSeasons[currentStakeSeason + 1].totalRewardTokenAmount = 0;
 
         currentStakeSeason++;
 

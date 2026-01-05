@@ -103,11 +103,11 @@ describe("AintiVirusFactory full flow", function () {
     });
   });
 
-  describe("Deposits (5 each mixer)", () => {
-    it("makes 5 deposits per mixer", async () => {
+  describe("Deposits (20 each mixer)", () => {
+    it("makes 20 deposits per mixer", async () => {
       for (const amount of MIXER_AMOUNTS) {
         const deposits: DepositRecord[] = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 20; i++) {
           const { secret, nullifier } = generateSecretAndNullifier();
           const commitment = computeCommitment(secret, nullifier);
           const fee = (amount * FEE_RATE) / 100000n;
@@ -137,7 +137,7 @@ describe("AintiVirusFactory full flow", function () {
           ethers.provider
         );
         const events = await mixer.queryFilter(mixer.filters.Deposit());
-        expect(events.length).to.equal(5);
+        expect(events.length).to.equal(20);
         console.log(
           `ℹ️  Mixer ${amount} has ${
             events.length
@@ -149,7 +149,7 @@ describe("AintiVirusFactory full flow", function () {
     });
   });
 
-  describe("Withdrawals (5 each mixer)", () => {
+  describe("Withdrawals (20 each mixer)", () => {
     it("withdraws all deposits to recipient", async () => {
       for (const amount of MIXER_AMOUNTS) {
         const mixerAddress = await factory.getMixer(AssetMode.ETH, amount);
