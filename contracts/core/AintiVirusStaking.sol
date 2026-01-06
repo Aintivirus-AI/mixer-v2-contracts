@@ -89,9 +89,9 @@ contract AintiVirusStaking is IAintiVirusStaking {
         );
         require(amount > 0, "Amount must be greater than zero");
 
-        uint256 daysLeftTillSeasonEnd = (stakeSeasons[currentStakeSeason]
-            .endTimestamp - block.timestamp) / DAY_IN_SECONDS;
-        uint256 stakerWeight = amount * daysLeftTillSeasonEnd;
+        uint256 timeLeftTillSeasonEnd = stakeSeasons[currentStakeSeason]
+            .endTimestamp - block.timestamp;
+        uint256 stakerWeight = (amount * timeLeftTillSeasonEnd) / DAY_IN_SECONDS;
 
         if (mode == uint256(CoreFactory.AssetMode.ETH)) {
             require(
@@ -171,7 +171,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
             if (seasonId == stakedSeasonId) {
                 weightValue = stakeRecords[staker].ethWeightValue;
             } else {
-                weightValue = stakedAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
+                weightValue = (stakedAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
 
             reward = (totalRewardAmount * weightValue) / totalWeightValue;
@@ -199,7 +199,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
             if (seasonId == stakedSeasonId) {
                 weightValue = stakeRecords[staker].tokenWeightValue;
             } else {
-                weightValue = stakedAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
+                weightValue = (stakedAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
 
             reward = (totalRewardAmount * weightValue) / totalWeightValue;
@@ -233,9 +233,10 @@ contract AintiVirusStaking is IAintiVirusStaking {
                 weightToRemove = stakeRecords[staker].ethWeightValue;
             } else {
                 // Otherwise, remove full period weight (same as claim calculation)
-                weightToRemove = releaseAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
+                weightToRemove = (releaseAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
 
+            stakeSeasons[currentStakeSeason].totalStakedEthAmount -= releaseAmount;
             stakeSeasons[currentStakeSeason].totalEthWeightValue -= weightToRemove;
 
             stakeRecords[staker].stakedEthAmount = 0;
@@ -258,9 +259,10 @@ contract AintiVirusStaking is IAintiVirusStaking {
                 weightToRemove = stakeRecords[staker].tokenWeightValue;
             } else {
                 // Otherwise, remove full period weight (same as claim calculation)
-                weightToRemove = releaseAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
+                weightToRemove = (releaseAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
 
+            stakeSeasons[currentStakeSeason].totalStakedTokenAmount -= releaseAmount;
             stakeSeasons[currentStakeSeason].totalTokenWeightValue -= weightToRemove;
 
             stakeRecords[staker].stakedTokenAmount = 0;
@@ -281,14 +283,16 @@ contract AintiVirusStaking is IAintiVirusStaking {
         // Transfer current season's data to next season
         stakeSeasons[currentStakeSeason + 1] = stakeSeasons[currentStakeSeason];
 
+        stakeSeasons[currentStakeSeason + 1].seasonId = currentStakeSeason + 1;
+        
         stakeSeasons[currentStakeSeason + 1].startTimestamp = block.timestamp;
         stakeSeasons[currentStakeSeason + 1].endTimestamp =
             block.timestamp +
             stakingSeasonPeriod;
 
-        stakeSeasons[currentStakeSeason + 1].totalEthWeightValue  = stakeSeasons[currentStakeSeason].totalStakedEthAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
+        stakeSeasons[currentStakeSeason + 1].totalEthWeightValue  = (stakeSeasons[currentStakeSeason].totalStakedEthAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
 
-        stakeSeasons[currentStakeSeason + 1].totalTokenWeightValue = stakeSeasons[currentStakeSeason].totalStakedTokenAmount * (stakingSeasonPeriod / DAY_IN_SECONDS);
+        stakeSeasons[currentStakeSeason + 1].totalTokenWeightValue = (stakeSeasons[currentStakeSeason].totalStakedTokenAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
 
         stakeSeasons[currentStakeSeason + 1].totalRewardEthAmount = 0;
         stakeSeasons[currentStakeSeason + 1].totalRewardTokenAmount = 0;

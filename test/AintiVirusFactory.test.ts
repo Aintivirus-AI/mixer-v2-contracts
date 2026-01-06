@@ -714,24 +714,24 @@ describe("AintiVirusFactory", function () {
       );
     });
 
-    it("Should update verifier", async () => {
-      const newVerifier = await (
-        await ethers.getContractFactory("Groth16Verifier")
-      ).deploy();
-      await newVerifier.waitForDeployment();
-      await factory
-        .connect(operator)
-        .setVerifier(await newVerifier.getAddress());
-      expect(await factory.verifier()).to.equal(await newVerifier.getAddress());
+    it("Should have immutable verifier (Fix A03)", async () => {
+      // Fix A03: Verifier is now immutable and cannot be changed
+      // This ensures consistency across all mixer deployments
+      const originalVerifier = await factory.verifier();
+      expect(originalVerifier).to.equal(await verifier.getAddress());
+      console.log(
+        "✅ Verifier is immutable - cannot be changed after deployment"
+      );
     });
 
-    it("Should update hasher", async () => {
-      const newHasher = await (
-        await ethers.getContractFactory("Poseidon")
-      ).deploy();
-      await newHasher.waitForDeployment();
-      await factory.connect(operator).setHasher(await newHasher.getAddress());
-      expect(await factory.hasher()).to.equal(await newHasher.getAddress());
+    it("Should have immutable hasher (Fix A03)", async () => {
+      // Fix A03: Hasher is now immutable and cannot be changed
+      // This ensures consistency across all mixer deployments
+      const originalHasher = await factory.hasher();
+      expect(originalHasher).to.equal(await poseidon.getAddress());
+      console.log(
+        "✅ Hasher is immutable - cannot be changed after deployment"
+      );
     });
 
     it("Should set staking season period", async () => {

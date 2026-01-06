@@ -4,6 +4,7 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "test:factory": "hardhat test test/AintiVirusFactory.test.ts",
+    "test:complex": "hardhat test test/AintiVirusFactory.complex.test.ts",
     "test:watch": "hardhat test --watch",
     "test:gas": "REPORT_GAS=true hardhat test",
     "node": "hardhat node",

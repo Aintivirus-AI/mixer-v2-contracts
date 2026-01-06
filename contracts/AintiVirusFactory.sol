@@ -118,7 +118,7 @@ contract AintiVirusFactory is CoreFactory {
         uint256 fee = (_amount * feeRate) / 100000;
 
         if (_mode == uint256(AssetMode.ETH)) {
-            require(msg.value >= _amount + fee, "Insufficient ETH deposit");
+            require(msg.value == _amount + fee, "ETH amount must equal deposit + fee exactly");
         } else {
             require(
                 mixToken.balanceOf(msg.sender) >= _amount + fee,
@@ -179,7 +179,7 @@ contract AintiVirusFactory is CoreFactory {
      */
     function stakeEther(uint256 amount) public payable nonReentrant {
         require(amount > 0, "Amount must be greater than zero");
-        require(amount <= msg.value, "Insufficient ETH sent");
+        require(msg.value == amount, "ETH amount must equal stake amount exactly");
 
         // Delegate state management to Staking (validates season and duplicate staking)
         staking.stakeState(msg.sender, uint256(AssetMode.ETH), amount);

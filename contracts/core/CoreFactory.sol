@@ -22,14 +22,12 @@ contract CoreFactory is ReentrancyGuard, AccessControl {
 
     // ============ STATE VARIABLES ============
     
-    address public verifier;
-    address public hasher;
+    address public immutable verifier;
+    address public immutable hasher;
     uint256 public feeRate; // Fee rate in basis points (e.g., 250 = 0.25%)
 
     // ============ EVENTS ============
     
-    event VerifierUpdated(address indexed oldVerifier, address indexed newVerifier);
-    event HasherUpdated(address indexed oldHasher, address indexed newHasher);
     event FeeRateUpdated(uint256 oldFeeRate, uint256 newFeeRate);
 
     // ============ CONSTRUCTOR ============
@@ -48,35 +46,14 @@ contract CoreFactory is ReentrancyGuard, AccessControl {
     }
 
     // ============ SETTING FUNCTIONS ============
-
-    /**
-     * @dev Set the verifier contract address
-     * @param _verifier The new verifier contract address
-     */
-    function setVerifier(address _verifier) external onlyRole(OPERATOR_ROLE) {
-        require(_verifier != address(0), "Verifier cannot be zero address");
-        address oldVerifier = verifier;
-        verifier = _verifier;
-        emit VerifierUpdated(oldVerifier, _verifier);
-    }
-
-    /**
-     * @dev Set the hasher contract address
-     * @param _hasher The new hasher contract address
-     */
-    function setHasher(address _hasher) external onlyRole(OPERATOR_ROLE) {
-        require(_hasher != address(0), "Hasher cannot be zero address");
-        address oldHasher = hasher;
-        hasher = _hasher;
-        emit HasherUpdated(oldHasher, _hasher);
-    }
+    
 
     /**
      * @dev Set the fee rate
      * @param _feeRate The new fee rate in basis points (e.g., 250 for 0.25%)
      */
     function setFeeRate(uint256 _feeRate) external onlyRole(OPERATOR_ROLE) {
-        require(_feeRate <= 100000, "Fee rate cannot exceed 100%");
+        require(_feeRate <= 5000, "Fee rate cannot exceed 5%");
         uint256 oldFeeRate = feeRate;
         feeRate = _feeRate;
         emit FeeRateUpdated(oldFeeRate, _feeRate);
