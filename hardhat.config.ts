@@ -12,6 +12,8 @@ const MAINNET_RPC =
     ? `https://mainnet.infura.io/v3/${INFURA_KEY}`
     : "https://ethereum-rpc.publicnode.com");
 const LOCAL_RPC = process.env.LOCAL_RPC_URL || "http://127.0.0.1:8545";
+const DEVNET_RPC =
+  process.env.DEVNET_RPC_URL || process.env.SEPOLIA_RPC_URL || "";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
 // Build networks object conditionally
@@ -43,6 +45,31 @@ if (process.env.PRIVKEY) {
     gasPrice: 50_000_000_000,
     blockGasLimit: 0x1fffffffffffff,
   };
+}
+
+// Add devnet/testnet if PRIVKEY and RPC URL are set
+if (process.env.PRIVKEY && DEVNET_RPC) {
+  networks.devnet = {
+    url: DEVNET_RPC,
+    accounts: [process.env.PRIVKEY],
+    gas: "auto",
+    gasMultiplier: 1.2,
+    // Common testnet chain IDs
+    chainId: process.env.DEVNET_CHAIN_ID
+      ? parseInt(process.env.DEVNET_CHAIN_ID)
+      : undefined,
+  };
+
+  // Also add sepolia if using Sepolia RPC
+  if (process.env.SEPOLIA_RPC_URL) {
+    networks.sepolia = {
+      url: process.env.SEPOLIA_RPC_URL,
+      accounts: [process.env.PRIVKEY],
+      gas: "auto",
+      gasMultiplier: 1.2,
+      chainId: 11155111,
+    };
+  }
 }
 
 // Optional external local node (e.g. anvil/geth) with forking

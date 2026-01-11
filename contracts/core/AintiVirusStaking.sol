@@ -321,5 +321,27 @@ contract AintiVirusStaking is IAintiVirusStaking {
     function getCurrentStakeSeason() external view override returns (uint256) {
         return currentStakeSeason;
     }
+
+    function getCurrentWeight(address staker, uint256 mode) external view returns (uint256 weight) {
+        if (mode == uint256(CoreFactory.AssetMode.ETH)) {
+            uint256 stakedSeasonId = stakeRecords[staker].ethStakedSeasonId;
+
+            if (currentStakeSeason == stakedSeasonId) {
+                return stakeRecords[staker].ethWeightValue;
+            } else {
+                return
+                    (stakeRecords[staker].stakedEthAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
+            }
+        } else {
+            uint256 stakedSeasonId = stakeRecords[staker].tokenStakedSeasonId;
+
+            if (currentStakeSeason == stakedSeasonId) {
+                return stakeRecords[staker].tokenWeightValue;
+            } else {
+                return
+                    (stakeRecords[staker].stakedTokenAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
+            }
+        }
+    }
 }
 

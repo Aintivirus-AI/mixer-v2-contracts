@@ -8,7 +8,9 @@
     "test:watch": "hardhat test --watch",
     "test:gas": "REPORT_GAS=true hardhat test",
     "node": "hardhat node",
-    "typechain": "hardhat typechain"
+    "typechain": "hardhat typechain",
+    "deploy:devnet": "hardhat run scripts/deploy.ts --network devnet",
+    "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
