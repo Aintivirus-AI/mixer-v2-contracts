@@ -27,6 +27,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
             currentStakeSeason,
             block.timestamp,
             block.timestamp + stakingSeasonPeriod,
+            stakingSeasonPeriod,
             0,
             0,
             0,
@@ -171,7 +172,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
             if (seasonId == stakedSeasonId) {
                 weightValue = stakeRecords[staker].ethWeightValue;
             } else {
-                weightValue = (stakedAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
+                weightValue = (stakedAmount * stakeSeasons[seasonId].stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
 
             reward = (totalRewardAmount * weightValue) / totalWeightValue;
@@ -199,7 +200,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
             if (seasonId == stakedSeasonId) {
                 weightValue = stakeRecords[staker].tokenWeightValue;
             } else {
-                weightValue = (stakedAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
+                weightValue = (stakedAmount * stakeSeasons[seasonId].stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
 
             reward = (totalRewardAmount * weightValue) / totalWeightValue;
@@ -233,7 +234,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
                 weightToRemove = stakeRecords[staker].ethWeightValue;
             } else {
                 // Otherwise, remove full period weight (same as claim calculation)
-                weightToRemove = (releaseAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
+                weightToRemove = (releaseAmount * stakeSeasons[currentStakeSeason].stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
 
             stakeSeasons[currentStakeSeason].totalStakedEthAmount -= releaseAmount;
@@ -259,7 +260,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
                 weightToRemove = stakeRecords[staker].tokenWeightValue;
             } else {
                 // Otherwise, remove full period weight (same as claim calculation)
-                weightToRemove = (releaseAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
+                weightToRemove = (releaseAmount * stakeSeasons[currentStakeSeason].stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
 
             stakeSeasons[currentStakeSeason].totalStakedTokenAmount -= releaseAmount;
@@ -286,6 +287,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
         stakeSeasons[currentStakeSeason + 1].seasonId = currentStakeSeason + 1;
         
         stakeSeasons[currentStakeSeason + 1].startTimestamp = block.timestamp;
+        stakeSeasons[currentStakeSeason + 1].stakingSeasonPeriod = stakingSeasonPeriod;
         stakeSeasons[currentStakeSeason + 1].endTimestamp =
             block.timestamp +
             stakingSeasonPeriod;
@@ -330,7 +332,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
                 return stakeRecords[staker].ethWeightValue;
             } else {
                 return
-                    (stakeRecords[staker].stakedEthAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
+                    (stakeRecords[staker].stakedEthAmount * stakeSeasons[currentStakeSeason].stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
         } else {
             uint256 stakedSeasonId = stakeRecords[staker].tokenStakedSeasonId;
@@ -339,7 +341,7 @@ contract AintiVirusStaking is IAintiVirusStaking {
                 return stakeRecords[staker].tokenWeightValue;
             } else {
                 return
-                    (stakeRecords[staker].stakedTokenAmount * stakingSeasonPeriod) / DAY_IN_SECONDS;
+                    (stakeRecords[staker].stakedTokenAmount * stakeSeasons[currentStakeSeason].stakingSeasonPeriod) / DAY_IN_SECONDS;
             }
         }
     }

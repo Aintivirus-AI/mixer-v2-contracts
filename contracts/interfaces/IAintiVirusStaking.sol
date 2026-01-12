@@ -17,6 +17,7 @@ interface IAintiVirusStaking {
         uint256 seasonId;
         uint256 startTimestamp;
         uint256 endTimestamp;
+        uint256 stakingSeasonPeriod;
         uint256 totalStakedEthAmount;
         uint256 totalStakedTokenAmount;
         uint256 totalRewardEthAmount;
@@ -44,6 +45,7 @@ interface IAintiVirusStaking {
         uint256 seasonId,
         uint256 startTimestamp,
         uint256 endTimestamp,
+        uint256 stakingSeasonPeriod,
         uint256 totalStakedEthAmount,
         uint256 totalStakedTokenAmount,
         uint256 totalRewardEthAmount,
